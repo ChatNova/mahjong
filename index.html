@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vita Mahjong • 3D Realistic (YENİ)</title>
+  <title>Vita Mahjong • Modern Duvar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      background: linear-gradient(135deg, #0a1118, #101c2c, #0d2b4f);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -27,34 +27,27 @@
       padding: 16px;
     }
 
-    /* Start Screen */
-    #start-screen {
-      text-align: center;
-      max-width: 800px;
+    /* Genel Stil */
+    #start-screen, #game-ui {
       z-index: 100;
+      max-width: 800px;
+      text-align: center;
     }
 
-    #start-screen h1 {
+    h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 3.2rem;
-      background: linear-gradient(90deg, #4cc9f0, #4361ee);
+      font-size: 3rem;
+      background: linear-gradient(90deg, #66d9ef, #ae81ff);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       margin-bottom: 20px;
-      text-shadow: 0 4px 12px rgba(76, 201, 240, 0.3);
-    }
-
-    #start-screen p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      line-height: 1.6;
-      color: #a0a0c0;
+      text-shadow: 0 4px 12px rgba(102, 217, 239, 0.4);
     }
 
     .btn {
-      background: linear-gradient(90deg, #4cc9f0, #4361ee);
-      color: white;
+      background: linear-gradient(90deg, #66d9ef, #ae81ff);
+      color: #1e1e2e;
       border: none;
       padding: 16px 48px;
       font-size: 1.3rem;
@@ -64,201 +57,107 @@
       transition: all 0.3s ease;
       font-family: 'Orbitron', sans-serif;
       letter-spacing: 1px;
-      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+      box-shadow: 0 6px 20px rgba(174, 129, 255, 0.4);
     }
 
     .btn:hover {
       transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.6);
+      box-shadow: 0 10px 25px rgba(174, 129, 255, 0.6);
     }
 
     /* Game UI */
     #game-ui {
       display: none;
       width: 100%;
-      max-width: 800px;
-      text-align: center;
     }
 
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(26, 26, 46, 0.7);
-      padding: 14px 24px;
-      border-radius: 16px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(67, 97, 238, 0.3);
-      margin-bottom: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    .title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
-      color: #4cc9f0;
-    }
-
-    .stats {
-      display: flex;
-      gap: 16px;
-    }
-
-    .stat-box {
-      background: rgba(22, 33, 62, 0.6);
-      padding: 8px 16px;
-      border-radius: 12px;
-      min-width: 100px;
-    }
-
-    .stat-label {
-      font-size: 0.85rem;
-      opacity: 0.8;
+      background: rgba(30, 30, 46, 0.8);
+      border: 1px solid rgba(174, 129, 255, 0.3);
+      color: #f8f8f2;
     }
 
     .stat-value {
-      font-weight: bold;
-      font-size: 1.25rem;
-      color: #4cc9f0;
+      color: #66d9ef;
     }
 
+    /* Mahjong Taşı Stil İyileştirmesi */
     .game-container {
-      position: relative;
-      width: 100%;
-      max-width: 600px;
-      height: 600px;
-      margin: 0 auto;
-      perspective: 1000px; /* 3D derinliği için önemli */
-      overflow: hidden;
-      border-radius: 12px;
-      background: rgba(10, 15, 30, 0.4);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      perspective: 1500px;
+      height: 750px; /* Daha uzun bir duvar için alan açar */
     }
 
     #game-board {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      /* Piramit merkezini yakalamak için hafif kaydırılabilir */
-      transform: rotateX(60deg) rotateZ(20deg) translate(-50px, -150px) scale(1.1);
+      position: absolute; /* Board'un tam yerleşimi için */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotateX(65deg) rotateZ(0deg) scale(1.1); /* Görseldeki gibi bakış açısı */
       transform-style: preserve-3d;
       transition: transform 0.5s ease;
+      width: 500px; /* Duvar genişliği */
+      height: 600px; /* Duvar yüksekliği */
     }
 
     .tile {
-      position: absolute;
-      width: 70px;
-      height: 100px;
-      /* Gerçekçi Mahjong Taşı Görünümü */
-      background: #f0e6d2; /* Yüzey rengi */
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      font-weight: bold;
-      cursor: pointer;
-      transform-style: preserve-3d;
-      transition: all 0.3s ease;
-      
-      /* 3D Efekt: Gölgeler ve Kenarlar */
+      width: 65px; /* Daha kompakt */
+      height: 95px;
+      background: #ffffff; /* Beyaz Zemin */
+      border-radius: 4px;
+      font-size: 2rem;
+      color: #8b0000;
       box-shadow: 
-        0 0 0 1px rgba(0,0,0,0.2) inset, /* Yüzeydeki hafif sınır */
-        0 4px 6px rgba(0,0,0,0.5), /* Alt gölge */
-        0 0 0 3px #0f5431; /* Yeşil Kenar */
-        
+        0 0 0 1px #282a36 inset, /* İç Çizgi */
+        0 8px 15px rgba(0,0,0,0.4), /* Genel Gölge */
+        0 0 0 3px #0f5431; /* Yeşil Kenar Çerçevesi */
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
       user-select: none;
-      color: #8b0000; /* Kırmızı Semboller için başlangıç rengi */
-      z-index: 1;
-      backface-visibility: hidden;
+      z-index: 10;
     }
     
-    /* 3D Kenar Görünümü için - Basit yaklaşım */
+    /* 3D derinlik için küçük bir kenar simülasyonu */
     .tile::after {
       content: '';
       position: absolute;
-      bottom: -10px; /* Kenar kalınlığı */
-      left: 0;
-      width: 100%;
-      height: 10px;
-      background-color: #0f5431; /* Yeşil alt kenar */
-      border-radius: 0 0 6px 6px;
-      transform: translateZ(-1px); /* Biraz geriye it */
+      right: -5px; 
+      top: 0;
+      width: 5px; 
+      height: 100%;
+      background: #d3d3d3; /* Gri yan kenar */
+      transform: rotateY(90deg) translateZ(5px);
+      transform-origin: left center;
     }
-    
-    /* Zemin Rengi Değişiklikleri */
-    .tile:nth-child(4n + 1) { color: #8b0000; } /* Kırmızı */
-    .tile:nth-child(4n + 2) { color: #006400; } /* Yeşil */
-    .tile:nth-child(4n + 3) { color: #00008b; } /* Mavi */
-    .tile:nth-child(4n + 4) { color: #5d2906; } /* Kahve */
-    /* Sembollerin rengi, tile içeriğine göre dinamik olarak belirlenmediği için bu rastgele renkler eklendi. */
-
 
     .tile.blocked {
-      opacity: 0.45; /* Daha şeffaf */
-      cursor: not-allowed;
-      filter: grayscale(80%) brightness(0.8);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      opacity: 0.5;
+      filter: grayscale(100%) brightness(0.6);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
     }
 
     .tile.selected {
-      /* Seçildiğinde biraz yukarı kalkar ve öne gelir */
-      transform: translateZ(40px) translateY(-5px) scale(1.05); 
+      /* Seçildiğinde kalkma ve mavi çerçeve */
+      transform: translateZ(50px) translateY(-10px) scale(1.08); 
       box-shadow: 
-        0 0 0 4px #4cc9f0,
-        0 12px 25px rgba(76, 201, 240, 0.7);
+        0 0 0 4px #66d9ef,
+        0 15px 30px rgba(102, 217, 239, 0.8);
       z-index: 1000;
       opacity: 1;
       filter: none;
     }
-
-    .tile.matched {
-      animation: explode 0.7s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
-    }
-
-    @keyframes explode {
-      0% {
-        transform: translateZ(0) scale(1);
-        opacity: 1;
-      }
-      40% {
-        transform: translateZ(40px) scale(1.2) rotate(5deg);
-        filter: brightness(1.5);
-      }
-      100% {
-        transform: translateZ(100px) scale(0);
-        opacity: 0;
-      }
-    }
-
-    .instructions {
-      margin-top: 24px;
-      font-size: 0.95rem;
-      text-align: center;
-      max-width: 600px;
-      line-height: 1.6;
-      background: rgba(22, 33, 62, 0.5);
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(67, 97, 238, 0.2);
-      color: #a0a0c0;
-    }
-
+    
+    /* Duvar formasyonuna uyacak şekilde küçük ekran ayarı */
     @media (max-width: 600px) {
-      .tile { width: 50px; height: 72px; font-size: 1.6rem; }
+      .tile { width: 45px; height: 65px; font-size: 1.4rem; }
+      .tile::after { right: -3px; width: 3px; }
       .game-container { height: 500px; }
-      .header { flex-direction: column; gap: 12px; }
-      .stat-box { padding: 6px 12px; font-size: 0.8rem; }
-      .btn { padding: 14px 36px; font-size: 1.1rem; }
-      #game-board { transform: rotateX(60deg) rotateZ(20deg) translate(-100px, -150px) scale(0.8); }
+      #game-board { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(0deg) scale(0.8); }
     }
   </style>
 </head>
 <body>
     <div id="start-screen">
-    <h1>🪷 VITA MAHJONG (3D YENİLENDİ)</h1>
+    <h1>🪷 MODERN MAHJONG DUVARI</h1>
     <p>
-      🎯 **Gerçek 3D Piramit Düzeneği** ile derinlikli Mahjong Solitaire!<br>
+      🎯 Görseldeki gibi simetrik ve şık 3D duvar düzeni!<br>
       ✅ Her sembolden 4 adet → eşleşme her zaman mümkün<br>
       🔄 Sonsuz level — durmadan oyna!
     </p>
@@ -327,83 +226,82 @@
     const scoreEl = document.getElementById('score');
     const boardEl = document.getElementById('game-board');
 
-    // Sabitler
-    const TILE_WIDTH = 70;
-    const TILE_HEIGHT = 100;
+    // Sabitler (CSS ile eşleşmeli)
+    const TILE_WIDTH = 65;
+    const TILE_HEIGHT = 95;
     const TILE_DEPTH = 10;
-    const TILE_SPACING_X = TILE_WIDTH - 20; // 50
-    const TILE_SPACING_Y = TILE_HEIGHT - 35; // 65
-    const HALF_TILE_WIDTH = TILE_WIDTH / 2;
-    const HALF_TILE_HEIGHT = TILE_HEIGHT / 2;
-
+    const TILE_SPACING_X = TILE_WIDTH - 15; // Yatayda 50px boşluk
+    const TILE_SPACING_Y = TILE_HEIGHT - 30; // Dikeyde 65px boşluk
+    
 
     // Shuffle
     function shuffle(arr) {
       return [...arr].sort(() => Math.random() - 0.5);
     }
 
-    // Gelişmiş Piramit Düzeni
+    // Gelişmiş Duvar Düzeni (Simetrik ve kompakt)
     function generateLayout() {
       const positions = [];
-      
-      // Piramidin temel katmanı (Layer 0) - En alttaki büyük dikdörtgen
-      const maxRows = 6; 
-      const maxCols = 10; 
+      const MAX_COLS = 8; // Duvar genişliği
+      const MAX_ROWS = 8; // Duvar yüksekliği
+      const LAYERS = 3; // Katman derinliği (3. katmanda daha az taş olacak)
       let tileCount = 0;
 
-      // Layer 0 (En alt katman)
-      for (let row = 0; row < maxRows; row++) {
-        for (let col = 0; col < maxCols; col++) {
-          // Piramidin merkezi çevresinde konumlandırma
-          const x = col * TILE_SPACING_X;
-          const y = row * TILE_SPACING_Y;
-          positions.push({ x, y, layer: 0, row, col });
-          tileCount++;
-        }
-      }
-
-      // Layer 1 (Bir üst katman)
-      const offset = 1; // Üst katmanın ne kadar içeriden başlayacağı
-      for (let row = offset; row < maxRows - offset; row++) {
-        for (let col = offset; col < maxCols - offset; col++) {
-          const x = col * TILE_SPACING_X;
-          const y = row * TILE_SPACING_Y;
-          positions.push({ x, y, layer: 1, row, col });
-          tileCount++;
-        }
-      }
+      const layerMap = [
+        // Layer 0 (En alt, büyük kare)
+        { rows: MAX_ROWS, cols: MAX_COLS, offset: 0, count: 64 }, 
+        // Layer 1 (Ortanca, küçülmüş kare)
+        { rows: MAX_ROWS - 2, cols: MAX_COLS - 2, offset: 1, count: 36 },
+        // Layer 2 (Üst, küçük kare)
+        { rows: MAX_ROWS - 4, cols: MAX_COLS - 4, offset: 2, count: 16 },
+        // Layer 3 (Merkez, 4 taş)
+        { rows: 2, cols: 2, offset: 3, count: 4 },
+        // Layer 4 (En üst, 1 taş)
+        { rows: 1, cols: 1, offset: 3.5, count: 1 } 
+      ];
       
-      // Layer 2 (Ortanca katman)
-      const offset2 = 2; 
-      for (let row = offset2; row < maxRows - offset2; row++) {
-        for (let col = offset2; col < maxCols - offset2; col++) {
-          const x = col * TILE_SPACING_X;
-          const y = row * TILE_SPACING_Y;
-          positions.push({ x, y, layer: 2, row, col });
-          tileCount++;
+      // Toplam taş sayısı 121 (144'e yakın bir simetrik yapı)
+      // Geri kalan 23 taşı rastgele kenarlara ekleyebiliriz veya bu 121 taşla oynayabiliriz.
+      // Basitlik ve simetri için 121 taş düzenini kullanıp, fazlalıkları atalım.
+
+      layerMap.forEach((layerInfo, layer) => {
+        const startRow = layerInfo.offset;
+        const startCol = layerInfo.offset;
+        
+        // Merkezlemeye yardımcı olmak için ana 8x8 ızgaraya göre konum hesaplanır.
+        for (let row = 0; row < layerInfo.rows; row++) {
+          for (let col = 0; col < layerInfo.cols; col++) {
+            if (tileCount >= 144) return; // 144 taşı aşmayalım
+            
+            // Izgara koordinatları
+            const gridRow = startRow + row;
+            const gridCol = startCol + col;
+            
+            const x = gridCol * TILE_SPACING_X;
+            const y = gridRow * TILE_SPACING_Y;
+            
+            positions.push({ x, y, layer, row: gridRow, col: gridCol });
+            tileCount++;
+          }
         }
-      }
+      });
+
+      // Merkezleme için X ve Y ofsetlerini hesapla
+      const totalWidth = MAX_COLS * TILE_SPACING_X + TILE_WIDTH;
+      const totalHeight = MAX_ROWS * TILE_SPACING_Y + TILE_HEIGHT;
       
-      // Layer 3 (En üst katman) - Tek bir taş
-      const offset3 = 3; 
-      if (tileCount < 144) {
-        const x = offset3 * TILE_SPACING_X;
-        const y = offset3 * TILE_SPACING_Y - 5; // Hafif yukarı
-        positions.push({ x, y, layer: 3, row: offset3, col: offset3 });
-        tileCount++;
-      }
+      const centerOffsetX = totalWidth / 2;
+      const centerOffsetY = totalHeight / 2;
 
 
-      // Merkezi Konumlandırma Düzeltmesi (10'luk kolon genişliğine göre)
-      const centerOffsetX = (maxCols * TILE_SPACING_X - TILE_WIDTH) / 2;
-      const centerOffsetY = (maxRows * TILE_SPACING_Y - TILE_HEIGHT) / 2;
-      
-      // Toplam 144 taşı aşmaması için (Çünkü basit piramit 144 taşı doldurmayabilir)
+      // Son taş sayısı 144'ten az ise (Örneğin 121), kalan 23 taşı rasgele bir yerlere serpiştirebiliriz (Örn: Duvarın etrafına)
+      // Basitlik için sadece oluşturulan 121 taşla (veya ne kadar çıktıysa o kadarla) devam ediyoruz.
+
       return positions.slice(0, 144).map(pos => ({
         ...pos,
         // Ekranın ortasına hizala
-        x: pos.x - centerOffsetX + 200, // Piramidi merkeze al
-        y: pos.y - centerOffsetY + 250,
+        x: pos.x - centerOffsetX + 300, 
+        y: pos.y - centerOffsetY + 350,
       }));
     }
 
@@ -419,7 +317,7 @@
 
       board = positions.map((pos, idx) => {
         return {
-          id: idx, // Her taşa benzersiz bir ID ver
+          id: idx, 
           symbol: shuffledTiles[idx],
           x: pos.x,
           y: pos.y,
@@ -456,23 +354,11 @@
       levelDisplay.textContent = level;
     }
 
-    function isOverlapping(t1, t2) {
-      // Basit kutu çarpışması tespiti
-      return (
-        t1.x < t2.x + TILE_WIDTH &&
-        t1.x + TILE_WIDTH > t2.x &&
-        t1.y < t2.y + TILE_HEIGHT &&
-        t1.y + TILE_HEIGHT > t2.y
-      );
-    }
-
     function updateBlockedStatus() {
       board.forEach(tile => {
         if (tile.matched) return;
 
         let blockedByAbove = false;
-        let blockedBySides = true; // Başlangıçta her iki tarafı da kapalı varsayılır
-
         let leftSideOpen = true;
         let rightSideOpen = true;
 
@@ -480,32 +366,36 @@
           if (other === tile || other.matched) continue;
 
           // 1. Üstten Engelleme Kontrolü (Aynı x/y pozisyonunda daha yüksek katman)
-          if (other.layer > tile.layer && isOverlapping(tile, other)) {
-            blockedByAbove = true;
+          if (other.layer > tile.layer) { 
+            // Üstteki taşın merkezi, alttaki taşın alanı içindeyse bloklanır.
+            const isOverlappingX = Math.abs(other.x - tile.x) < TILE_SPACING_X / 2;
+            const isOverlappingY = Math.abs(other.y - tile.y) < TILE_SPACING_Y / 2;
+            if (isOverlappingX && isOverlappingY) {
+              blockedByAbove = true;
+            }
           }
 
           // 2. Yandan Engelleme Kontrolü (Aynı katmanda sol veya sağ tarafta temas)
           if (other.layer === tile.layer) {
             
-            // Aynı satırda olmalılar, y pozisyonları yaklaşık aynıysa
-            if (Math.abs(other.y - tile.y) < TILE_SPACING_Y / 2) { 
+            // Aynı sıradalar mı? (Y pozisyonları yakın)
+            if (Math.abs(other.y - tile.y) < 10) { 
               
-              // Hemen sağında mı? (Col + 1)
-              if (other.col === tile.col + 1 && other.row === tile.row) {
+              // Hemen sağında mı? (X pozisyon farkı tek bir boşluk kadar)
+              if (other.x > tile.x && Math.abs(other.x - (tile.x + TILE_SPACING_X)) < 10) {
                 rightSideOpen = false;
               }
               
-              // Hemen solunda mı? (Col - 1)
-              if (other.col === tile.col - 1 && other.row === tile.row) {
+              // Hemen solunda mı?
+              if (other.x < tile.x && Math.abs(other.x - (tile.x - TILE_SPACING_X)) < 10) {
                 leftSideOpen = false;
               }
             }
           }
         }
         
-        // En az bir kenar açıksa (Sol VEYA Sağ) engellenmemiştir.
-        blockedBySides = !(leftSideOpen || rightSideOpen);
-
+        // Engellenme durumu: Üstten kapalı VEYA her iki yandan da kapalı
+        const blockedBySides = !(leftSideOpen || rightSideOpen);
         tile.blocked = blockedByAbove || blockedBySides;
         
         if (tile.element) {
@@ -527,24 +417,23 @@
       }
 
       if (selected.length === 2) {
-        // Gecikmeli eşleştirme kontrolü (Görsel geri bildirim için kısa bir duraksama)
         setTimeout(() => {
           const [t1, t2] = selected;
           if (t1.symbol === t2.symbol) {
-            // Eşleşme!
+            // Match!
             t1.matched = true;
             t2.matched = true;
             t1.element.classList.add('matched');
             t2.element.classList.add('matched');
             matched += 2;
-            score += 50; // Puanı yükselt
+            score += 50; 
             scoreEl.textContent = score;
 
             // Animasyon sonrası kaldırma
             setTimeout(() => {
               t1.element.remove();
               t2.element.remove();
-              updateBlockedStatus(); // Yeni taşlar açılmış olabilir
+              updateBlockedStatus(); 
               updateRemaining();
               
               // Level Tamamlandı Kontrolü
@@ -560,11 +449,11 @@
             // Eşleşme yok: Deselect
             t1.element.classList.remove('selected');
             t2.element.classList.remove('selected');
-            score = Math.max(0, score - 5); // Yanlış eşleşmede ceza
+            score = Math.max(0, score - 5); 
             scoreEl.textContent = score;
           }
           selected = [];
-          updateBlockedStatus(); // Deselect sonrası blokajı yeniden kontrol et
+          updateBlockedStatus(); 
         }, 300);
       }
     }
