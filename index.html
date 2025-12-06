@@ -1,473 +1,865 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vita Mahjong • Modern Duvar</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VITA MAHJONG - 3D Oyun</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/three@0.151.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/@react-three/fiber@8.13.0/dist/react-three-fiber.umd.js"></script>
+    <script src="https://unpkg.com/@react-three/drei@9.94.3/dist/drei.umd.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.0/dist/framer-motion.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      background: linear-gradient(135deg, #0a1118, #101c2c, #0d2b4f);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Noto Sans TC', sans-serif;
-      color: #e6e6e6;
-      overflow: hidden;
-      padding: 16px;
-    }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
 
-    /* Genel Stil */
-    #start-screen, #game-ui {
-      z-index: 100;
-      max-width: 800px;
-      text-align: center;
-    }
+        #root {
+            width: 100%;
+            min-height: 100vh;
+        }
 
-    h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 3rem;
-      background: linear-gradient(90deg, #66d9ef, #ae81ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 20px;
-      text-shadow: 0 4px 12px rgba(102, 217, 239, 0.4);
-    }
+        /* Game Container */
+        .game-container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
 
-    .btn {
-      background: linear-gradient(90deg, #66d9ef, #ae81ff);
-      color: #1e1e2e;
-      border: none;
-      padding: 16px 48px;
-      font-size: 1.3rem;
-      font-weight: bold;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-family: 'Orbitron', sans-serif;
-      letter-spacing: 1px;
-      box-shadow: 0 6px 20px rgba(174, 129, 255, 0.4);
-    }
+        /* Start Screen */
+        .start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            text-align: center;
+        }
 
-    .btn:hover {
-      transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 10px 25px rgba(174, 129, 255, 0.6);
-    }
+        .title {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #22d3ee, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(34, 211, 238, 0.3);
+        }
 
-    /* Game UI */
-    #game-ui {
-      display: none;
-      width: 100%;
-    }
+        .mahjong-icon {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+        }
 
-    .header {
-      background: rgba(30, 30, 46, 0.8);
-      border: 1px solid rgba(174, 129, 255, 0.3);
-      color: #f8f8f2;
-    }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
 
-    .stat-value {
-      color: #66d9ef;
-    }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    /* Mahjong Taşı Stil İyileştirmesi */
-    .game-container {
-      perspective: 1500px;
-      height: 750px; /* Daha uzun bir duvar için alan açar */
-    }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
 
-    #game-board {
-      position: absolute; /* Board'un tam yerleşimi için */
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotateX(65deg) rotateZ(0deg) scale(1.1); /* Görseldeki gibi bakış açısı */
-      transform-style: preserve-3d;
-      transition: transform 0.5s ease;
-      width: 500px; /* Duvar genişliği */
-      height: 600px; /* Duvar yüksekliği */
-    }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
 
-    .tile {
-      width: 65px; /* Daha kompakt */
-      height: 95px;
-      background: #ffffff; /* Beyaz Zemin */
-      border-radius: 4px;
-      font-size: 2rem;
-      color: #8b0000;
-      box-shadow: 
-        0 0 0 1px #282a36 inset, /* İç Çizgi */
-        0 8px 15px rgba(0,0,0,0.4), /* Genel Gölge */
-        0 0 0 3px #0f5431; /* Yeşil Kenar Çerçevesi */
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      user-select: none;
-      z-index: 10;
-    }
-    
-    /* 3D derinlik için küçük bir kenar simülasyonu */
-    .tile::after {
-      content: '';
-      position: absolute;
-      right: -5px; 
-      top: 0;
-      width: 5px; 
-      height: 100%;
-      background: #d3d3d3; /* Gri yan kenar */
-      transform: rotateY(90deg) translateZ(5px);
-      transform-origin: left center;
-    }
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
 
-    .tile.blocked {
-      opacity: 0.5;
-      filter: grayscale(100%) brightness(0.6);
-      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-    }
+        .feature-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
 
-    .tile.selected {
-      /* Seçildiğinde kalkma ve mavi çerçeve */
-      transform: translateZ(50px) translateY(-10px) scale(1.08); 
-      box-shadow: 
-        0 0 0 4px #66d9ef,
-        0 15px 30px rgba(102, 217, 239, 0.8);
-      z-index: 1000;
-      opacity: 1;
-      filter: none;
-    }
-    
-    /* Duvar formasyonuna uyacak şekilde küçük ekran ayarı */
-    @media (max-width: 600px) {
-      .tile { width: 45px; height: 65px; font-size: 1.4rem; }
-      .tile::after { right: -3px; width: 3px; }
-      .game-container { height: 500px; }
-      #game-board { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(0deg) scale(0.8); }
-    }
-  </style>
+        /* Game Header */
+        .game-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+        }
+
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.75rem 1.25rem;
+            min-width: 140px;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .combo-display {
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+            color: black;
+            font-weight: 800;
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .canvas-container canvas {
+            outline: none;
+        }
+
+        /* Game Controls */
+        .game-controls {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .controls-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .instructions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .instruction-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: background 0.3s ease;
+        }
+
+        .instruction-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .instruction-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .instruction-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .instruction-desc {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Buttons */
+        .start-button {
+            background: linear-gradient(90deg, #06b6d4, #4f46e5);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.4);
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(79, 70, 229, 0.6);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+        }
+
+        .control-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hint-button {
+            background: linear-gradient(90deg, #8b5cf6, #ec4899);
+            color: white;
+        }
+
+        .reset-button {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #06b6d4, #4f46e5);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card {
+                min-width: 120px;
+                padding: 0.5rem 1rem;
+            }
+            
+            .instructions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .instructions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="start-screen">
-    <h1>🪷 MODERN MAHJONG DUVARI</h1>
-    <p>
-      🎯 Görseldeki gibi simetrik ve şık 3D duvar düzeni!<br>
-      ✅ Her sembolden 4 adet → eşleşme her zaman mümkün<br>
-      🔄 Sonsuz level — durmadan oyna!
-    </p>
-    <button class="btn" id="start-btn">🎮 OYUNA BAŞLA</button>
-  </div>
+    <div id="root"></div>
 
-    <div id="game-ui">
-    <div class="header">
-      <div class="title">Level: <span id="level-display">1</span></div>
-      <div class="stats">
-        <div class="stat-box">
-          <div class="stat-label">Kalan Taş</div>
-          <div class="stat-value" id="remaining">144</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Puan</div>
-          <div class="stat-value" id="score">0</div>
-        </div>
-      </div>
-    </div>
+    <script type="text/babel">
+        const { useState, useRef, useEffect, useCallback } = React;
+        const { Canvas, useFrame, useThree } = ReactThreeFiber;
+        const { OrbitControls, Text, Html, Float, Stars, Sky } = Drei;
+        const { motion } = FramerMotion;
 
-    <div class="game-container">
-      <div id="game-board"></div>
-    </div>
+        // Mahjong symbols
+        const SYMBOLS = [
+            '🀙','🀚','🀛','🀜','🀝','🀞','🀟','🀠','🀡',
+            '🀇','🀈','🀉','🀊','🀋','🀌','🀍','🀎','🀏',
+            '🀐','🀑','🀒','🀓','🀔','🀕','🀖','🀗','🀘',
+            '🀀','🀁','🀂','🀃',
+            '🀄','🀅','🀆'
+        ];
 
-    <div class="instructions">
-      🖱️ **2 eşleşen, üstü açık taş** seç → patlat!<br>
-      🔓 Üstünde başka taş olmayan ve **sol/sağ kenarı açık olanlar** seçilebilir (gri olanlar kapalı).
-    </div>
-  </div>
+        // Shuffle array
+        function shuffle(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
 
-  <script>
-    // ✅ DOĞRU 144 TAŞ: 36 sembol × 4 adet
-    const SYMBOLS = [
-      // Circles
-      '🀙','🀚','🀛','🀜','🀝','🀞','🀟','🀠','🀡',
-      // Bamboos
-      '🀇','🀈','🀉','🀊','🀋','🀌','🀍','🀎','🀏',
-      // Characters
-      '🀐','🀑','🀒','🀓','🀔','🀕','🀖','🀗','🀘',
-      // Winds
-      '🀀','🀁','🀂','🀃',
-      // Dragons
-      '🀄','🀅','🀆'
-    ];
+        // Generate pyramid layout
+        function generatePyramidLayout() {
+            const positions = [];
+            const baseX = -6;
+            const baseY = -3;
+            const spacingX = 1.3;
+            const spacingY = 1.4;
+            const offset = 0.7;
 
-    let tiles = [];
-    SYMBOLS.forEach(sym => {
-      for (let i = 0; i < 4; i++) tiles.push(sym);
-    });
+            for (let layer = 0; layer < 4; layer++) {
+                const rows = 6 - layer;
+                const cols = 10 - layer * 2;
 
-    // Game state
-    let level = 1;
-    let board = [];
-    let selected = [];
-    let matched = 0;
-    let score = 0;
-    let totalTiles = 0;
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
+                        const x = baseX + col * spacingX + layer * offset + (10 - cols) * spacingX / 2;
+                        const y = baseY + row * spacingY + layer * offset;
+                        positions.push({ x, y, z: layer * 0.35 });
+                    }
+                }
+            }
 
-    // DOM
-    const startScreen = document.getElementById('start-screen');
-    const gameUI = document.getElementById('game-ui');
-    const startBtn = document.getElementById('start-btn');
-    const levelDisplay = document.getElementById('level-display');
-    const remainingEl = document.getElementById('remaining');
-    const scoreEl = document.getElementById('score');
-    const boardEl = document.getElementById('game-board');
+            return positions.slice(0, 144);
+        }
 
-    // Sabitler (CSS ile eşleşmeli)
-    const TILE_WIDTH = 65;
-    const TILE_HEIGHT = 95;
-    const TILE_DEPTH = 10;
-    const TILE_SPACING_X = TILE_WIDTH - 15; // Yatayda 50px boşluk
-    const TILE_SPACING_Y = TILE_HEIGHT - 30; // Dikeyde 65px boşluk
-    
+        function App() {
+            const [level, setLevel] = useState(1);
+            const [score, setScore] = useState(0);
+            const [highScore, setHighScore] = useState(() => {
+                return parseInt(localStorage.getItem('mahjongHighScore')) || 0;
+            });
+            const [remaining, setRemaining] = useState(144);
+            const [selected, setSelected] = useState([]);
+            const [gameStarted, setGameStarted] = useState(false);
+            const [board, setBoard] = useState([]);
+            const [matched, setMatched] = useState(0);
+            const [combo, setCombo] = useState(0);
+            const [gameTime, setGameTime] = useState(0);
+            const [hint, setHint] = useState(null);
 
-    // Shuffle
-    function shuffle(arr) {
-      return [...arr].sort(() => Math.random() - 0.5);
-    }
+            const timerRef = React.useRef(null);
+            const comboTimeoutRef = React.useRef(null);
 
-    // Gelişmiş Duvar Düzeni (Simetrik ve kompakt)
-    function generateLayout() {
-      const positions = [];
-      const MAX_COLS = 8; // Duvar genişliği
-      const MAX_ROWS = 8; // Duvar yüksekliği
-      const LAYERS = 3; // Katman derinliği (3. katmanda daha az taş olacak)
-      let tileCount = 0;
+            // Save high score to localStorage
+            useEffect(() => {
+                if (score > highScore) {
+                    setHighScore(score);
+                    localStorage.setItem('mahjongHighScore', score.toString());
+                }
+            }, [score]);
 
-      const layerMap = [
-        // Layer 0 (En alt, büyük kare)
-        { rows: MAX_ROWS, cols: MAX_COLS, offset: 0, count: 64 }, 
-        // Layer 1 (Ortanca, küçülmüş kare)
-        { rows: MAX_ROWS - 2, cols: MAX_COLS - 2, offset: 1, count: 36 },
-        // Layer 2 (Üst, küçük kare)
-        { rows: MAX_ROWS - 4, cols: MAX_COLS - 4, offset: 2, count: 16 },
-        // Layer 3 (Merkez, 4 taş)
-        { rows: 2, cols: 2, offset: 3, count: 4 },
-        // Layer 4 (En üst, 1 taş)
-        { rows: 1, cols: 1, offset: 3.5, count: 1 } 
-      ];
-      
-      // Toplam taş sayısı 121 (144'e yakın bir simetrik yapı)
-      // Geri kalan 23 taşı rastgele kenarlara ekleyebiliriz veya bu 121 taşla oynayabiliriz.
-      // Basitlik ve simetri için 121 taş düzenini kullanıp, fazlalıkları atalım.
+            // Timer
+            useEffect(() => {
+                if (gameStarted) {
+                    timerRef.current = setInterval(() => {
+                        setGameTime(prev => prev + 1);
+                    }, 1000);
+                } else {
+                    clearInterval(timerRef.current);
+                }
 
-      layerMap.forEach((layerInfo, layer) => {
-        const startRow = layerInfo.offset;
-        const startCol = layerInfo.offset;
-        
-        // Merkezlemeye yardımcı olmak için ana 8x8 ızgaraya göre konum hesaplanır.
-        for (let row = 0; row < layerInfo.rows; row++) {
-          for (let col = 0; col < layerInfo.cols; col++) {
-            if (tileCount >= 144) return; // 144 taşı aşmayalım
-            
-            // Izgara koordinatları
-            const gridRow = startRow + row;
-            const gridCol = startCol + col;
-            
-            const x = gridCol * TILE_SPACING_X;
-            const y = gridRow * TILE_SPACING_Y;
-            
-            positions.push({ x, y, layer, row: gridRow, col: gridCol });
-            tileCount++;
-          }
-        }
-      });
+                return () => clearInterval(timerRef.current);
+            }, [gameStarted]);
 
-      // Merkezleme için X ve Y ofsetlerini hesapla
-      const totalWidth = MAX_COLS * TILE_SPACING_X + TILE_WIDTH;
-      const totalHeight = MAX_ROWS * TILE_SPACING_Y + TILE_HEIGHT;
-      
-      const centerOffsetX = totalWidth / 2;
-      const centerOffsetY = totalHeight / 2;
+            // Initialize game board
+            useEffect(() => {
+                if (!gameStarted) return;
 
+                const shuffledSymbols = shuffle([...SYMBOLS.flatMap(s => Array(4).fill(s))]);
+                const positions = generatePyramidLayout();
 
-      // Son taş sayısı 144'ten az ise (Örneğin 121), kalan 23 taşı rasgele bir yerlere serpiştirebiliriz (Örn: Duvarın etrafına)
-      // Basitlik için sadece oluşturulan 121 taşla (veya ne kadar çıktıysa o kadarla) devam ediyoruz.
+                const newBoard = positions.map((pos, idx) => ({
+                    symbol: shuffledSymbols[idx],
+                    position: new THREE.Vector3(pos.x, pos.y, pos.z),
+                    matched: false,
+                    blocked: true,
+                    selected: false,
+                    id: idx,
+                    rotation: Math.random() * Math.PI * 2
+                }));
 
-      return positions.slice(0, 144).map(pos => ({
-        ...pos,
-        // Ekranın ortasına hizala
-        x: pos.x - centerOffsetX + 300, 
-        y: pos.y - centerOffsetY + 350,
-      }));
-    }
+                setBoard(newBoard);
+                setRemaining(144);
+                setMatched(0);
+                setSelected([]);
+                setCombo(0);
+                setGameTime(0);
+                setHint(null);
+            }, [gameStarted, level]);
 
+            // Update blocked status
+            useEffect(() => {
+                if (!gameStarted || board.length === 0) return;
 
-    function initLevel() {
-      boardEl.innerHTML = '';
-      selected = [];
-      matched = 0;
+                const updateBlockedStatus = () => {
+                    const newBoard = [...board];
+                    const grid = {};
 
-      const shuffledTiles = shuffle([...tiles]);
-      const positions = generateLayout();
-      totalTiles = positions.length;
+                    // Create spatial grid
+                    newBoard.forEach(tile => {
+                        if (tile.matched) return;
+                        const key = `${Math.round(tile.position.x)},${Math.round(tile.position.y)}`;
+                        if (!grid[key]) grid[key] = [];
+                        grid[key].push(tile);
+                    });
 
-      board = positions.map((pos, idx) => {
-        return {
-          id: idx, 
-          symbol: shuffledTiles[idx],
-          x: pos.x,
-          y: pos.y,
-          layer: pos.layer,
-          row: pos.row, 
-          col: pos.col,
-          matched: false,
-          blocked: true,
-          element: null
-        };
-      });
+                    newBoard.forEach(tile => {
+                        if (tile.matched) {
+                            tile.blocked = false;
+                            return;
+                        }
 
-      updateRemaining();
+                        let blocked = false;
+                        const key = `${Math.round(tile.position.x)},${Math.round(tile.position.y)}`;
 
-      // Render
-      board.forEach(tile => {
-        const tileEl = document.createElement('div');
-        tileEl.className = 'tile';
-        tileEl.textContent = tile.symbol;
-        tileEl.style.left = `${tile.x}px`;
-        tileEl.style.top = `${tile.y}px`;
-        
-        // Katman derinliğini Z-index ve 3D çeviri ile ayarlama
-        tileEl.style.zIndex = tile.layer * 100 + tile.y; 
-        tileEl.style.transform = `translateZ(${tile.layer * TILE_DEPTH}px)`;
-        
-        tile.element = tileEl;
-        boardEl.appendChild(tileEl);
+                        if (grid[key]) {
+                            for (const other of grid[key]) {
+                                if (other === tile || other.matched) continue;
+                                if (other.position.z > tile.position.z) {
+                                    const dx = Math.abs(other.position.x - tile.position.x);
+                                    const dy = Math.abs(other.position.y - tile.position.y);
+                                    if (dx < 0.9 && dy < 1.2) {
+                                        blocked = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
 
-        tileEl.addEventListener('click', () => handleTileClick(tile));
-      });
+                        tile.blocked = blocked;
+                    });
 
-      updateBlockedStatus();
-      levelDisplay.textContent = level;
-    }
+                    setBoard(newBoard);
+                };
 
-    function updateBlockedStatus() {
-      board.forEach(tile => {
-        if (tile.matched) return;
+                updateBlockedStatus();
+            }, [board, gameStarted]);
 
-        let blockedByAbove = false;
-        let leftSideOpen = true;
-        let rightSideOpen = true;
+            const handleTileClick = useCallback((tile) => {
+                if (tile.matched || tile.blocked || selected.length >= 2) return;
 
-        for (const other of board) {
-          if (other === tile || other.matched) continue;
+                const newSelected = selected.includes(tile.id)
+                    ? selected.filter(id => id !== tile.id)
+                    : [...selected, tile.id];
 
-          // 1. Üstten Engelleme Kontrolü (Aynı x/y pozisyonunda daha yüksek katman)
-          if (other.layer > tile.layer) { 
-            // Üstteki taşın merkezi, alttaki taşın alanı içindeyse bloklanır.
-            const isOverlappingX = Math.abs(other.x - tile.x) < TILE_SPACING_X / 2;
-            const isOverlappingY = Math.abs(other.y - tile.y) < TILE_SPACING_Y / 2;
-            if (isOverlappingX && isOverlappingY) {
-              blockedByAbove = true;
-            }
-          }
+                setSelected(newSelected);
 
-          // 2. Yandan Engelleme Kontrolü (Aynı katmanda sol veya sağ tarafta temas)
-          if (other.layer === tile.layer) {
-            
-            // Aynı sıradalar mı? (Y pozisyonları yakın)
-            if (Math.abs(other.y - tile.y) < 10) { 
-              
-              // Hemen sağında mı? (X pozisyon farkı tek bir boşluk kadar)
-              if (other.x > tile.x && Math.abs(other.x - (tile.x + TILE_SPACING_X)) < 10) {
-                rightSideOpen = false;
-              }
-              
-              // Hemen solunda mı?
-              if (other.x < tile.x && Math.abs(other.x - (tile.x - TILE_SPACING_X)) < 10) {
-                leftSideOpen = false;
-              }
-            }
-          }
-        }
-        
-        // Engellenme durumu: Üstten kapalı VEYA her iki yandan da kapalı
-        const blockedBySides = !(leftSideOpen || rightSideOpen);
-        tile.blocked = blockedByAbove || blockedBySides;
-        
-        if (tile.element) {
-          tile.element.classList.toggle('blocked', tile.blocked);
-        }
-      });
-    }
+                if (newSelected.length === 2) {
+                    setTimeout(() => {
+                        const t1 = board.find(t => t.id === newSelected[0]);
+                        const t2 = board.find(t => t.id === newSelected[1]);
 
-    function handleTileClick(tile) {
-      if (tile.matched || tile.blocked || selected.length >= 2) return;
+                        if (t1?.symbol === t2?.symbol) {
+                            // Successful match
+                            const newCombo = combo + 1;
+                            const comboBonus = Math.min(newCombo * 5, 50);
+                            const timeBonus = Math.max(300 - gameTime, 0);
+                            const points = 25 + comboBonus + Math.floor(timeBonus / 10);
 
-      const isSelected = selected.includes(tile);
-      if (isSelected) {
-        selected = selected.filter(t => t !== tile);
-        tile.element.classList.remove('selected');
-      } else {
-        selected.push(tile);
-        tile.element.classList.add('selected');
-      }
+                            setBoard(prev => prev.map(t => 
+                                t.id === t1.id || t.id === t2.id 
+                                    ? { ...t, matched: true, matchedAt: Date.now() } 
+                                    : t
+                            ));
+                            setMatched(prev => prev + 2);
+                            setScore(prev => prev + points);
+                            setRemaining(prev => prev - 2);
+                            setCombo(newCombo);
 
-      if (selected.length === 2) {
-        setTimeout(() => {
-          const [t1, t2] = selected;
-          if (t1.symbol === t2.symbol) {
-            // Match!
-            t1.matched = true;
-            t2.matched = true;
-            t1.element.classList.add('matched');
-            t2.element.classList.add('matched');
-            matched += 2;
-            score += 50; 
-            scoreEl.textContent = score;
+                            // Reset combo after delay
+                            if (comboTimeoutRef.current) clearTimeout(comboTimeoutRef.current);
+                            comboTimeoutRef.current = setTimeout(() => setCombo(0), 3000);
 
-            // Animasyon sonrası kaldırma
-            setTimeout(() => {
-              t1.element.remove();
-              t2.element.remove();
-              updateBlockedStatus(); 
-              updateRemaining();
-              
-              // Level Tamamlandı Kontrolü
-              if (matched >= totalTiles) {
-                setTimeout(() => {
-                  alert(`Level ${level} Tamamlandı! Yeni Level'a geçiliyor...`);
-                  level++;
-                  initLevel();
-                }, 800);
-              }
-            }, 700);
-          } else {
-            // Eşleşme yok: Deselect
-            t1.element.classList.remove('selected');
-            t2.element.classList.remove('selected');
-            score = Math.max(0, score - 5); 
-            scoreEl.textContent = score;
-          }
-          selected = [];
-          updateBlockedStatus(); 
-        }, 300);
-      }
-    }
+                            // Check level complete
+                            if (matched + 2 >= 144) {
+                                setTimeout(() => {
+                                    setLevel(prev => prev + 1);
+                                    setScore(prev => prev + 1000);
+                                }, 1000);
+                            }
+                        } else {
+                            // Failed match
+                            setCombo(0);
+                        }
+                        setSelected([]);
+                    }, 500);
+                }
+            }, [board, selected, combo, gameTime, matched]);
 
-    function updateRemaining() {
-      remainingEl.textContent = totalTiles - matched;
-    }
+            const findHint = useCallback(() => {
+                const availableTiles = board.filter(t => !t.matched && !t.blocked);
+                const symbolMap = new Map();
 
-    // Start game
-    startBtn.addEventListener('click', () => {
-      startScreen.style.display = 'none';
-      gameUI.style.display = 'block';
-      initLevel();
-    });
-  </script>
+                for (const tile of availableTiles) {
+                    if (!symbolMap.has(tile.symbol)) {
+                        symbolMap.set(tile.symbol, []);
+                    }
+                    symbolMap.get(tile.symbol).push(tile);
+                }
+
+                for (const [symbol, tiles] of symbolMap) {
+                    if (tiles.length >= 2) {
+                        setHint({ tiles: tiles.slice(0, 2) });
+                        setTimeout(() => setHint(null), 3000);
+                        return;
+                    }
+                }
+                setHint({ tiles: [] });
+            }, [board]);
+
+            const resetGame = () => {
+                setGameStarted(false);
+                setLevel(1);
+                setScore(0);
+                setHint(null);
+            };
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            const StartScreen = () => (
+                <div className="start-screen">
+                    <div className="mahjong-icon">🀄</div>
+                    <h1 className="title">VITA MAHJONG</h1>
+                    
+                    <div className="features-grid">
+                        <div className="feature-card">
+                            <div className="feature-icon">⚡</div>
+                            <h3 className="feature-title">Sonsuz Level</h3>
+                            <p className="feature-description">Sürekli artan zorluk seviyeleriyle oynayın</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">🎯</div>
+                            <h3 className="feature-title">Gerçek 3D</h3>
+                            <p className="feature-description">360° döndürülebilir 3D taşlar</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">✨</div>
+                            <h3 className="feature-title">Her Zaman Eşleşme</h3>
+                            <p className="feature-description">Her sembolden 4 adet bulunur</p>
+                        </div>
+                    </div>
+
+                    <div className="feature-card" style={{ maxWidth: '500px', marginTop: '1rem' }}>
+                        <h3 className="feature-title" style={{ textAlign: 'center' }}>🏆 En Yüksek Skor</h3>
+                        <p className="feature-description" style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', color: '#fbbf24' }}>
+                            {highScore}
+                        </p>
+                    </div>
+
+                    <button 
+                        className="start-button"
+                        onClick={() => setGameStarted(true)}
+                    >
+                        🎮 OYUNA BAŞLA
+                    </button>
+
+                    <p style={{ marginTop: '2rem', color: 'rgba(255, 255, 255, 0.6)' }}>
+                        🎯 Üstü açık taşları bul, eşleştir, patlat!
+                        <br />
+                        🕹️ Fare ile sürükle ve taşlara tıkla
+                    </p>
+                </div>
+            );
+
+            const GameHeader = () => (
+                <div className="game-header">
+                    <div className="stats-container">
+                        <div className="left-stats">
+                            <div className="stat-card">
+                                <div className="stat-icon">🏆</div>
+                                <div className="stat-info">
+                                    <div className="stat-label">Level</div>
+                                    <div className="stat-value">{level}</div>
+                                </div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-icon">⭐</div>
+                                <div className="stat-info">
+                                    <div className="stat-label">Skor</div>
+                                    <div className="stat-value">{score}</div>
+                                </div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-icon">⏱️</div>
+                                <div className="stat-info">
+                                    <div className="stat-label">Süre</div>
+                                    <div className="stat-value">{formatTime(gameTime)}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="right-controls">
+                            {combo > 0 && (
+                                <div className="combo-display">
+                                    COMBO x{combo}!
+                                </div>
+                            )}
+                            <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
+                                <button className="control-button hint-button" onClick={findHint}>
+                                    💡 İpucu
+                                </button>
+                                <button className="control-button reset-button" onClick={resetGame}>
+                                    🔄 Yeniden
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="progress-container">
+                        <div className="progress-bar">
+                            <div 
+                                className="progress-fill" 
+                                style={{ width: `${(remaining / 144) * 100}%` }}
+                            />
+                        </div>
+                        <div className="progress-stats">
+                            <span>Kalan: {remaining} taş</span>
+                            <span>Eşleşen: {matched} taş</span>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const GameControls = () => (
+                <div className="game-controls">
+                    <div className="controls-card">
+                        <div className="instructions-grid">
+                            <div className="instruction-item">
+                                <div className="instruction-icon">🎯</div>
+                                <div className="instruction-title">Seçim</div>
+                                <div className="instruction-desc">Üstü açık 2 taşa tıkla</div>
+                            </div>
+                            <div className="instruction-item">
+                                <div className="instruction-icon">✨</div>
+                                <div className="instruction-title">Eşleşme</div>
+                                <div className="instruction-desc">Aynı semboller patlar</div>
+                            </div>
+                            <div className="instruction-item">
+                                <div className="instruction-icon">⚡</div>
+                                <div className="instruction-title">Kombo</div>
+                                <div className="instruction-desc">Arka arkaya eşleştir</div>
+                            </div>
+                            <div className="instruction-item">
+                                <div className="instruction-icon">💎</div>
+                                <div className="instruction-title">Bonus</div>
+                                <div className="instruction-desc">Hızlı oyna, puanı artır</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="game-container">
+                    {!gameStarted ? (
+                        <StartScreen />
+                    ) : (
+                        <>
+                            <GameHeader />
+                            <div className="canvas-container">
+                                <Canvas shadows camera={{ position: [0, 5, 15], fov: 50 }}>
+                                    <color attach="background" args={['#0f172a']} />
+                                    <ambientLight intensity={0.5} />
+                                    <directionalLight position={[10, 10, 5]} intensity={2} castShadow />
+                                    <pointLight position={[-10, -10, -5]} intensity={1} color="#4f46e5" />
+                                    
+                                    <Stars radius={100} depth={50} count={2000} factor={4} />
+                                    
+                                    <group>
+                                        {board.map((tile) => (
+                                            <Tile 
+                                                key={tile.id} 
+                                                tile={tile} 
+                                                onClick={() => handleTileClick(tile)}
+                                                isHinted={hint?.tiles?.some(t => t.id === tile.id)}
+                                            />
+                                        ))}
+                                    </group>
+
+                                    <OrbitControls 
+                                        enableZoom={true}
+                                        enableRotate={true}
+                                        enablePan={true}
+                                        maxDistance={30}
+                                        minDistance={5}
+                                    />
+                                </Canvas>
+                            </div>
+                            <GameControls />
+                        </>
+                    )}
+                </div>
+            );
+        }
+
+        function Tile({ tile, onClick, isHinted }) {
+            const meshRef = React.useRef();
+            const glowRef = React.useRef();
+            const initialScale = React.useRef(tile.matched ? 0 : 1);
+
+            useFrame((state) => {
+                if (!meshRef.current) return;
+
+                if (tile.matched) {
+                    meshRef.current.scale.lerp(new THREE.Vector3(0, 0, 0), 0.1);
+                    meshRef.current.position.y += 0.05;
+                    meshRef.current.rotation.z += 0.05;
+                    return;
+                }
+
+                // Floating animation
+                const time = state.clock.getElapsedTime();
+                meshRef.current.position.y = tile.position.y + Math.sin(time + tile.id) * 0.05;
+                
+                // Selection animation
+                if (tile.selected) {
+                    meshRef.current.scale.lerp(new THREE.Vector3(1.15, 1.15, 1.15), 0.1);
+                    meshRef.current.rotation.y += 0.02;
+                } else {
+                    meshRef.current.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+                }
+
+                // Hint glow animation
+                if (isHinted && glowRef.current) {
+                    const scale = 1 + Math.sin(time * 5) * 0.2;
+                    glowRef.current.scale.set(scale, scale, scale);
+                }
+            });
+
+            const getTileColor = () => {
+                if (tile.blocked) return '#6b7280';
+                if (tile.selected) return '#fbbf24';
+                if (isHinted) return '#8b5cf6';
+                return '#f3f4f6';
+            };
+
+            return (
+                <React.Fragment>
+                    {isHinted && (
+                        <mesh ref={glowRef} position={[tile.position.x, tile.position.y, tile.position.z]}>
+                            <sphereGeometry args={[0.7, 16, 16]} />
+                            <meshBasicMaterial
+                                color="#8b5cf6"
+                                transparent
+                                opacity={0.3}
+                            />
+                        </mesh>
+                    )}
+
+                    <mesh
+                        ref={meshRef}
+                        position={[tile.position.x, tile.position.y, tile.position.z]}
+                        rotation={[0, tile.rotation, 0]}
+                        castShadow
+                        receiveShadow
+                        onClick={onClick}
+                        scale={initialScale.current}
+                    >
+                        <boxGeometry args={[0.9, 1.3, 0.25]} />
+                        <meshStandardMaterial
+                            color={getTileColor()}
+                            roughness={0.4}
+                            metalness={0.2}
+                            transparent
+                            opacity={tile.blocked ? 0.6 : 1}
+                        />
+                        
+                        <Text
+                            position={[0, 0, 0.13]}
+                            fontSize={0.5}
+                            color={tile.blocked ? '#4b5563' : '#1f2937'}
+                            anchorX="center"
+                            anchorY="middle"
+                        >
+                            {tile.symbol}
+                        </Text>
+                    </mesh>
+                </React.Fragment>
+            );
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
